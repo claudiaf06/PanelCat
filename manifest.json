@@ -1,7 +1,7 @@
 {
-  "name": "Panell Econòmic Catalunya",
-  "short_name": "Panell CAT",
-  "start_url": "./index.html",
+  "name": "PanelCat",
+  "short_name": "PanelCat",
+  "start_url": "./index.html?k=CAMBIA_ESTO_2026xx",
   "display": "standalone",
   "background_color": "#eef1ef",
   "theme_color": "#16233d",
