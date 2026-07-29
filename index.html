@@ -96,7 +96,7 @@
 </head>
 <body>
 
-<div id="dash">
+<div id="dash" style="display:none;">
   <div class="masthead">
     <div>
       <div class="masthead-title">Panell Econòmic de Catalunya</div>
@@ -158,6 +158,10 @@
 <script>
 (function(){
   const LOCAL_CFG_KEY = 'panell-cat-config-v1';
+   const ACCESS_KEY = 'Hola_2026'; // ← vuestra palabra secreta de acceso a la web
+  const params = new URLSearchParams(location.search);
+  if (params.get('k') !== ACCESS_KEY) { return; } // pàgina en blanc si no hi ha la clau
+  document.getElementById('dash').style.display = 'block';
 
   const defaultData = {
     kpis: [
