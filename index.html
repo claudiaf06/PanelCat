@@ -305,6 +305,23 @@
     });
   }
 
+    const CAT_COLORS = {
+    'Creixement': '#2e5c8a',
+    'Finances públiques': '#c9a227',
+    'Pressupost': '#ac341c',
+    'Context': '#3c6b4f'
+  };
+  const FALLBACK_PALETTE = ['#b8863b', '#16233d', '#4a5670', '#8a3b32'];
+  const catColorMap = {};
+  function catColor(cat){
+    if(CAT_COLORS[cat]) return CAT_COLORS[cat];
+    if(!catColorMap[cat]){
+      const used = Object.keys(catColorMap).length;
+      catColorMap[cat] = FALLBACK_PALETTE[used % FALLBACK_PALETTE.length];
+    }
+    return catColorMap[cat];
+  }
+  
    function renderGrid(){
     const grid = document.getElementById('dash-grid');
     grid.innerHTML = '';
@@ -313,7 +330,8 @@
 
     list.forEach(k=>{
       const card = document.createElement('div');
-      card.className = 'card trend-' + (k.trend||'flat');
+        card.className = 'card';
+      card.style.borderLeftColor = catColor(k.cat);
       card.innerHTML = `
         <button class="card-del" title="Elimina">✕</button>
         <div class="card-cat"><span class="ed" contenteditable="true" data-f="cat" spellcheck="false">${k.cat}</span></div>
