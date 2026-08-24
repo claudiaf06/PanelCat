@@ -348,11 +348,11 @@
     const list = activeTab === 'Tots' ? state.kpis : state.kpis.filter(k=>k.cat===activeTab);
     document.getElementById('dash-count').textContent = state.kpis.length + ' indicadors';
 
-     list.forEach((k, i)=>{
+        list.forEach((k, i)=>{
       const card = document.createElement('div');
       card.className = 'card';
       card.style.borderLeftColor = catColor(k.cat);
-          card.innerHTML = `
+      card.innerHTML = `
         <span class="drag-handle" title="Arrossega">⠿</span>
         <button class="card-del" title="Elimina">✕</button>
         <div class="card-cat"><span class="ed" contenteditable="true" data-f="cat" spellcheck="false">${k.cat}</span></div>
@@ -360,17 +360,29 @@
           <span class="ed val" contenteditable="true" data-f="value" spellcheck="false">${k.value}</span><span class="ed card-unit" contenteditable="true" data-f="unit" spellcheck="false">${k.unit||''}</span>
         </div>
         <div class="ed card-label" contenteditable="true" data-f="label" spellcheck="false">${k.label}</div>
-               <div class="card-meta">
+        <div class="card-meta">
           <span class="ed" contenteditable="true" data-f="period" spellcheck="false">${k.period||''}</span>
           <span class="ed" contenteditable="true" data-f="note" spellcheck="false">${k.note||''}</span>
-        </div>;
-    
-  function commitOrder(newList){
-    const indices = [];
-    state.kpis.forEach((k, idx) => { if(newList.includes(k)) indices.push(idx); });
-    indices.forEach((idx, i) => { state.kpis[idx] = newList[i]; });
-    persist(); renderTabs(); renderGrid();
-  }
+        </div>`;
+
+      card.querySelectorAll('.ed').forEach(el=>{
+        el.addEventListener('blur', () => {
+          const field = el.dataset.f;
+          k[field] = el.textContent.trim();
+          persist();
+          if(field === 'cat'){ renderTabs(); renderGrid(); }
+        });
+        el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
+      });
+
+      card.querySelector('.card-del').addEventListener('click', () => {
+        state.kpis = state.kpis.filter(x=>x.id!==k.id);
+        persist(); renderTabs(); renderGrid();
+      });
+
+      attachDragHandlers(card, k);
+      grid.appendChild(card);
+    });
 
   let dragState = null;
   function attachDragHandlers(card, k){
