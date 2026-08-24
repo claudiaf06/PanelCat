@@ -85,6 +85,10 @@
   .save-flag.show { opacity:0.92; }
   .save-flag.error { background:var(--brick); }
 
+    .drag-handle { position:absolute; top:6px; left:6px; cursor:grab; touch-action:none; color:var(--ink-soft); font-size:15px; padding:2px 4px; user-select:none; }
+  .drag-handle:active { cursor:grabbing; }
+  .card.dragging { opacity:0.75; box-shadow:0 10px 24px rgba(22,35,61,0.25); cursor:grabbing; }
+  .card { padding-left:26px; }
   /* Config modal */
   .modal-backdrop { position:fixed; inset:0; background:rgba(22,35,61,0.55); display:none; align-items:center; justify-content:center; z-index:100; padding:16px; }
   .modal-backdrop.show { display:flex; }
@@ -348,7 +352,8 @@
       const card = document.createElement('div');
       card.className = 'card';
       card.style.borderLeftColor = catColor(k.cat);
-      card.innerHTML = `
+          card.innerHTML = `
+        <span class="drag-handle" title="Arrossega">⠿</span>
         <button class="card-del" title="Elimina">✕</button>
         <div class="card-cat"><span class="ed" contenteditable="true" data-f="cat" spellcheck="false">${k.cat}</span></div>
         <div class="card-value">
@@ -359,11 +364,58 @@
           <span class="ed" contenteditable="true" data-f="period" spellcheck="false">${k.period||''}</span>
           <span class="ed" contenteditable="true" data-f="note" spellcheck="false">${k.note||''}</span>
         </div>
-        <div class="card-move">
-          <button class="move-btn" data-dir="-1" ${i===0?'disabled':''}>‹</button>
-          <button class="move-btn" data-dir="1" ${i===list.length-1?'disabled':''}>›</button>
-        </div>`;
+    
+  function commitOrder(newList){
+    const indices = [];
+    state.kpis.forEach((k, idx) => { if(newList.includes(k)) indices.push(idx); });
+    indices.forEach((idx, i) => { state.kpis[idx] = newList[i]; });
+    persist(); renderTabs(); renderGrid();
+  }
 
+  let dragState = null;
+  function attachDragHandlers(card, k){
+    const handle = card.querySelector('.drag-handle');
+    card._kpiRef = k;
+
+    handle.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      dragState = k;
+      card.classList.add('dragging');
+      card.setPointerCapture(e.pointerId);
+      card._startX = e.clientX; card._startY = e.clientY;
+    });
+    card.addEventListener('pointermove', (e) => {
+      if(dragState !== k) return;
+      const dx = e.clientX - card._startX;
+      const dy = e.clientY - card._startY;
+      card.style.transform = `translate(${dx}px, ${dy}px)`;
+      card.style.zIndex = 10;
+      card.style.pointerEvents = 'none';
+      const elUnder = document.elementFromPoint(e.clientX, e.clientY);
+      card.style.pointerEvents = '';
+      const targetCard = elUnder && elUnder.closest('.card');
+      if(targetCard && targetCard !== card && targetCard.parentElement === card.parentElement){
+        const grid = card.parentElement;
+        const cards = Array.from(grid.children).filter(c=>c.classList.contains('card'));
+        const from = cards.indexOf(card), to = cards.indexOf(targetCard);
+        if(from > -1 && to > -1){
+          if(from < to) grid.insertBefore(card, targetCard.nextSibling);
+          else grid.insertBefore(card, targetCard);
+        }
+      }
+    });
+    card.addEventListener('pointerup', () => {
+      if(dragState !== k) return;
+      dragState = null;
+      card.classList.remove('dragging');
+      card.style.transform = ''; card.style.zIndex = '';
+      const grid = card.parentElement;
+      const newList = Array.from(grid.children)
+        .filter(c=>c.classList.contains('card'))
+        .map(c => c._kpiRef).filter(Boolean);
+      commitOrder(newList);
+    });
+  }
       card.querySelectorAll('.ed').forEach(el=>{
         el.addEventListener('blur', () => {
           const field = el.dataset.f;
@@ -374,9 +426,7 @@
         el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
       });
 
-             card.querySelectorAll('.move-btn').forEach(btn=>{
-        btn.addEventListener('click', () => moveIndicator(k, parseInt(btn.dataset.dir), list));
-      });
+              attachDragHandlers(card, k);
 
       card.querySelector('.card-del').addEventListener('click', () => {
         state.kpis = state.kpis.filter(x=>x.id!==k.id);
