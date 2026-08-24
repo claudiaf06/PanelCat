@@ -1,1 +1,508 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panell Econòmic Catalunya</title>
 
+<!-- PWA / "instal·la com app" -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#16233d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PanelCAT">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    --paper: #eef1ef; --paper-raised: #f8f9f7; --ink: #16233d; --ink-soft: #4a5670;
+    --line: #cdd3ce; --gold: #b8863b; --gold-soft: #e9dcc3; --green: #3c6b4f;
+    --brick: #8a3b32; --brick-soft: #f0ddd8;
+    font-family: 'Inter', sans-serif; color: var(--ink); background: var(--paper);
+  }
+  #dash { padding: 20px 16px 60px; max-width: 900px; margin: 0 auto; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .masthead { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:3px solid var(--ink); padding-bottom:14px; margin-bottom:6px; gap:14px; flex-wrap:wrap; }
+  .masthead-title { font-family:'Fraunces',serif; font-weight:600; font-size:26px; line-height:1.05; }
+  .masthead-sub { font-size:11px; color:var(--ink-soft); margin-top:6px; letter-spacing:0.02em; text-transform:uppercase; }
+  .icon-btn { border:1px solid var(--line); background:var(--paper-raised); border-radius:999px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; }
+  .icon-btn:active { background: var(--gold-soft); }
+  .topbar-actions { display:flex; gap:8px; align-items:center; }
+
+  .seal { display:flex; align-items:center; gap:8px; border:1.5px solid var(--gold); border-radius:999px; padding:5px 12px 5px 5px; background:var(--paper-raised); font-size:11px; }
+  .seal-dot { width:28px; height:28px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:700; font-size:10px; flex-shrink:0; }
+
+  .strip { display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); padding:10px 2px 16px; border-bottom:1px solid var(--line); margin-bottom:16px; flex-wrap:wrap; gap:6px; }
+
+  .warn-banner { display:none; background:var(--brick-soft); border:1px solid var(--brick); color:var(--brick); font-size:12.5px; padding:10px 12px; border-radius:4px; margin-bottom:16px; line-height:1.5; }
+  .warn-banner.show { display:block; }
+  .ok-banner { display:none; background:#e2ece6; border:1px solid var(--green); color:var(--green); font-size:12.5px; padding:10px 12px; border-radius:4px; margin-bottom:16px; line-height:1.5; }
+  .ok-banner.show { display:block; }
+
+  .tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+  .tab { font-size:12px; font-weight:600; padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--paper-raised); cursor:pointer; color:var(--ink-soft); }
+  .tab.active { background:var(--ink); border-color:var(--ink); color:#fff; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px; margin-bottom:26px; }
+  .card { background:var(--paper-raised); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:3px; padding:14px 14px 12px; position:relative; }
+  .card.trend-up { border-left-color:var(--green); }
+  .card.trend-down { border-left-color:var(--brick); }
+  .card-cat { font-size:9.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-soft); margin-bottom:6px; font-weight:600; }
+  .card-value { font-family:'Fraunces',serif; font-weight:600; font-size:26px; line-height:1; display:flex; align-items:baseline; gap:4px; }
+  .card-value[contenteditable="true"] { outline:none; border-bottom:1px dashed var(--gold); }
+  .card-unit { font-size:13px; color:var(--ink-soft); font-weight:500; }
+  .card-label { font-size:12.5px; margin-top:5px; font-weight:500; }
+  .card-meta { display:flex; flex-direction:column; gap:2px; margin-top:10px; padding-top:8px; border-top:1px dotted var(--line); font-size:10px; color:var(--ink-soft); }
+  .card-del { position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%; border:none; background:transparent; color:var(--ink-soft); font-size:13px; cursor:pointer; }
+
+  .add-card { border:1.5px dashed var(--line); border-radius:3px; background:transparent; display:flex; align-items:center; justify-content:center; min-height:80px; cursor:pointer; color:var(--ink-soft); font-size:12.5px; font-weight:600; }
+
+  .section-title { font-family:'Fraunces',serif; font-weight:600; font-size:17px; margin:26px 0 12px; display:flex; align-items:center; gap:10px; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--line); }
+
+    .card-move { display:flex; justify-content:space-between; margin-top:8px; }
+  .move-btn { border:1px solid var(--line); background:var(--paper); border-radius:4px; width:26px; height:24px; cursor:pointer; color:var(--ink-soft); font-size:13px; }
+  .move-btn:disabled { opacity:0.25; cursor:default; }
+  .move-btn:not(:disabled):active { background:var(--gold-soft); }
+
+  .log-wrap { background:var(--paper-raised); border:1px solid var(--line); border-radius:4px; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; min-width:560px; }
+  thead th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); background:var(--gold-soft); padding:9px 10px; font-weight:700; }
+  tbody td { padding:8px 10px; border-top:1px solid var(--line); vertical-align:top; }
+  td[contenteditable="true"]:focus { background:#fff; box-shadow:inset 0 0 0 1.5px var(--gold); border-radius:2px; }
+  .col-val { font-family:'JetBrains Mono', monospace; font-weight:600; white-space:nowrap; }
+  .row-del { border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-size:13px; }
+  .log-footer { padding:9px 10px; border-top:1px solid var(--line); }
+  .add-row-btn { font-size:12px; font-weight:600; color:var(--ink-soft); background:transparent; border:none; cursor:pointer; }
+
+  .foot-note { margin-top:22px; font-size:10.5px; color:var(--ink-soft); line-height:1.6; border-top:1px solid var(--line); padding-top:12px; }
+  .save-flag { position:fixed; bottom:18px; right:18px; background:var(--ink); color:#fff; font-size:11px; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .25s; pointer-events:none; z-index:50; }
+  .save-flag.show { opacity:0.92; }
+  .save-flag.error { background:var(--brick); }
+
+    .drag-handle { position:absolute; top:6px; left:6px; cursor:grab; touch-action:none; color:var(--ink-soft); font-size:15px; padding:2px 4px; user-select:none; }
+  .drag-handle:active { cursor:grabbing; }
+  .card.dragging { opacity:0.75; box-shadow:0 10px 24px rgba(22,35,61,0.25); cursor:grabbing; }
+  .card { padding-left:26px; }
+  /* Config modal */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(22,35,61,0.55); display:none; align-items:center; justify-content:center; z-index:100; padding:16px; }
+  .modal-backdrop.show { display:flex; }
+  .modal { background:#fff; border-radius:8px; padding:22px; max-width:420px; width:100%; }
+  .modal h2 { font-family:'Fraunces',serif; font-size:19px; margin:0 0 6px; }
+  .modal p { font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px; }
+  .modal label { font-size:11.5px; font-weight:600; display:block; margin-bottom:4px; margin-top:12px; }
+  .modal input { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:4px; font-size:13px; font-family:'JetBrains Mono',monospace; }
+  .modal-actions { display:flex; gap:8px; margin-top:18px; }
+  .btn { border:none; border-radius:6px; padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-primary { background:var(--ink); color:#fff; flex:1; }
+  .btn-secondary { background:var(--paper); color:var(--ink); border:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<div id="dash" style="display:none;">
+  <div class="masthead">
+    <div>
+      <div class="masthead-title">Panell Econòmic de Catalunya</div>
+      <div class="masthead-sub">Indicadors fiscals i macroeconòmics · compartit</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btn-refresh" title="Actualitza">⟳</button>
+      <button class="icon-btn" id="btn-config" title="Configuració">⚙</button>
+    </div>
+  </div>
+  <div class="strip">
+    <div class="seal"><div class="seal-dot">CAT</div><span id="dash-updated">—</span></div>
+    <span id="dash-count" class="mono">— indicadors</span>
+  </div>
+
+  <div class="warn-banner" id="dash-warn"></div>
+  <div class="ok-banner" id="dash-ok"></div>
+
+  <div class="tabs" id="dash-tabs"></div>
+  <div class="grid" id="dash-grid"></div>
+
+  <div class="section-title" style="display:none;">Registre de seguiment</div>
+  <div class="log-wrap" style="display:none;">
+    <table>
+      <thead>
+        <tr><th style="width:24%">Indicador</th><th style="width:14%">Valor</th><th style="width:14%">Període</th><th style="width:38%">Nota / font</th><th style="width:10%"></th></tr>
+      </thead>
+      <tbody id="dash-log-body"></tbody>
+    </table>
+    <div class="log-footer">
+      <button class="add-row-btn" id="dash-add-row">+ Afegir fila de seguiment</button>
+    </div>
+  </div>
+
+  <div class="foot-note">
+    Toca sobre qualsevol xifra per editar-la. Es desa a un full de Google Sheets privat que
+    vosaltres controleu, així que els canvis es sincronitzen entre els dos mòbils. Toca ⟳ per
+    portar els canvis més recents que hagi fet l'altra persona.
+  </div>
+</div>
+<div class="save-flag" id="dash-save-flag"></div>
+
+<!-- Config modal -->
+<div class="modal-backdrop" id="config-modal">
+  <div class="modal">
+    <h2>Connexió compartida</h2>
+    <p>Enganxa aquí l'URL de l'aplicació web d'Apps Script i el codi secret (el mateix a tots dos mòbils) perquè les dades es sincronitzin. Només cal fer-ho un cop per dispositiu.</p>
+    <label for="cfg-url">URL de l'aplicació web</label>
+    <input id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
+    <label for="cfg-token">Codi secret</label>
+    <input id="cfg-token" placeholder="p. ex. 1234">
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cfg-cancel">Cancel·la</button>
+      <button class="btn btn-primary" id="cfg-save">Desa i connecta</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const LOCAL_CFG_KEY = 'panell-cat-config-v1';
+   const ACCESS_KEY = 'Hola_2026'; // ← vuestra palabra secreta de acceso a la web
+  const params = new URLSearchParams(location.search);
+  if (params.get('k') !== ACCESS_KEY) { return; } // pàgina en blanc si no hi ha la clau
+  document.getElementById('dash').style.display = 'block';
+
+  const defaultData = {
+    kpis: [
+      { id:'k1', cat:'Creixement', label:'Creixement del PIB', value:'2,5', unit:'%', period:'2025 (previsió)', note:'Escenari macroeconòmic, tardor 2025', trend:'up' },
+      { id:'k2', cat:'Creixement', label:'Creixement del PIB', value:'2,1', unit:'%', period:'2026 (previsió)', note:'Escenari macroeconòmic, tardor 2025', trend:'up' },
+      { id:'k3', cat:'Creixement', label:"Taxa d'atur", value:'8,4', unit:'%', period:'2025 (previsió)', note:'Reducció gradual prevista', trend:'down' },
+      { id:'k4', cat:'Creixement', label:"Taxa d'atur", value:'8,2', unit:'%', period:'2026 (previsió)', note:'110.000 llocs de treball al bienni', trend:'down' },
+      { id:'k5', cat:'Creixement', label:'Diferencial vs. zona euro', value:'+1,3', unit:'pp', period:'2025', note:'Zona euro: 0,8% (FMI)', trend:'up' },
+
+      { id:'k6', cat:'Finances públiques', label:'Deute Generalitat i sector públic', value:'89.069', unit:'M€', period:'3T 2025 (provisional)', note:'Dada provisional més recent', trend:'flat' },
+      { id:'k7', cat:'Finances públiques', label:'Ràtio deute / PIB', value:'28,4', unit:'%', period:'2025', note:'Previsió 2026: 27,4%', trend:'down' },
+      { id:'k8', cat:'Finances públiques', label:'Dèficit públic', value:'0,41', unit:'% PIB', period:'2024', note:'-68% respecte a l\'any anterior', trend:'down' },
+      { id:'k9', cat:'Finances públiques', label:'Superàvit corrent', value:'+2.475', unit:'M€', period:'2026 (pressupost)', note:'Màxim de la sèrie històrica', trend:'up' },
+      { id:'k10', cat:'Finances públiques', label:'Període mitjà de pagament', value:'28', unit:'dies', period:'2025', note:'Límit normatiu: 30 dies', trend:'down' },
+
+      { id:'k12', cat:'Pressupost', label:'Despesa total pressupostada', value:'49.162', unit:'M€', period:'2026 (rècord)', note:'+22,8% vs. pressupost 2023', trend:'up' },
+      { id:'k13', cat:'Pressupost', label:'Ingressos no financers', value:'48.231', unit:'M€', period:'2026', note:'+27,9% vs. 2023', trend:'up' },
+      { id:'k14', cat:'Pressupost', label:'Inversió del sector públic', value:'4.146', unit:'M€', period:'2026', note:'+45% sense fons Next Generation', trend:'up' },
+
+      { id:'k16', cat:'Context', label:'Creixement Espanya', value:'2,5–2,6', unit:'%', period:'2025', note:'Referència comparativa', trend:'flat' },
+      { id:'k17', cat:'Context', label:'Qualificació creditícia', value:'3/3', unit:'agències', period:'2025', note:"Fitch, Moody's, DBRS: grau d'inversió", trend:'up' }
+    ],
+    log: [
+      { indicator:'IPC / inflació', value:'', period:'', note:'' },
+      { indicator:'Exportacions catalanes', value:'', period:'', note:'' }
+    ],
+    lastUpdated: null
+  };
+
+  let state = null;
+  let cfg = { url:'', token:'' };
+  let activeTab = 'Tots';
+  let pollTimer = null;
+
+  function loadCfg(){
+    try {
+      const raw = localStorage.getItem(LOCAL_CFG_KEY);
+      if(raw) cfg = JSON.parse(raw);
+    } catch(e){}
+  }
+  function saveCfg(){
+    localStorage.setItem(LOCAL_CFG_KEY, JSON.stringify(cfg));
+  }
+  function cfgReady(){ return cfg.url && cfg.token; }
+
+  function fmtDate(iso){
+    if(!iso) return 'Sense sincronitzar';
+    const d = new Date(iso);
+    return d.toLocaleDateString('ca-ES', {day:'2-digit', month:'short'}) + ' ' +
+           d.toLocaleTimeString('ca-ES', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function flag(msg, ok){
+    const f = document.getElementById('dash-save-flag');
+    f.textContent = msg;
+    f.classList.toggle('error', !ok);
+    f.classList.add('show');
+    setTimeout(()=> f.classList.remove('show'), 1800);
+  }
+  function warn(msg){
+    const w = document.getElementById('dash-warn');
+    document.getElementById('dash-ok').classList.remove('show');
+    if(msg){ w.textContent = '⚠ ' + msg; w.classList.add('show'); }
+    else w.classList.remove('show');
+  }
+  function ok(msg){
+    const o = document.getElementById('dash-ok');
+    document.getElementById('dash-warn').classList.remove('show');
+    if(msg){ o.textContent = '✓ ' + msg; o.classList.add('show'); }
+    else o.classList.remove('show');
+  }
+
+  async function remoteLoad(){
+    const res = await fetch(cfg.url + '?token=' + encodeURIComponent(cfg.token), { cache:'no-store' });
+    const text = await res.text();
+    if(!text) return null;
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(e){ throw new Error('Resposta inesperada del servidor'); }
+    if(parsed && parsed.error) throw new Error(parsed.error === 'unauthorized' ? 'Codi secret incorrecte' : parsed.error);
+    return parsed;
+  }
+  async function remoteSave(newState){
+    const res = await fetch(cfg.url, {
+      method:'POST',
+      headers: { 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify({ token: cfg.token, data: JSON.stringify(newState) })
+    });
+    const text = await res.text();
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(e){ throw new Error('Resposta inesperada del servidor'); }
+    if(parsed && parsed.error) throw new Error(parsed.error === 'unauthorized' ? 'Codi secret incorrecte' : parsed.error);
+    return true;
+  }
+
+  async function persist(){
+    if(!cfgReady()){
+      warn('Encara no has connectat aquest mòbil. Toca ⚙ per configurar la connexió compartida.');
+      flag('Sense connexió', false);
+      return;
+    }
+    state.lastUpdated = new Date().toISOString();
+    try {
+      await remoteSave(state);
+      warn(null);
+      document.getElementById('dash-updated').textContent = fmtDate(state.lastUpdated);
+      flag('Desat i sincronitzat ✓', true);
+    } catch(e){
+      warn('No s\u2019ha pogut desar: ' + e.message + '. Comprova la connexió a internet i torna a provar.');
+      flag('Error en desar', false);
+    }
+  }
+
+  async function refresh(showFlag){
+    if(!cfgReady()){ warn('Toca ⚙ per configurar la connexió compartida amb l\u2019altra persona.'); render(); return; }
+    try {
+      const remote = await remoteLoad();
+      state = remote || JSON.parse(JSON.stringify(defaultData));
+      warn(null);
+      document.getElementById('dash-updated').textContent = fmtDate(state.lastUpdated);
+      if(showFlag) flag('Actualitzat ✓', true);
+    } catch(e){
+      warn('No s\u2019han pogut carregar les dades: ' + e.message);
+      if(!state) state = JSON.parse(JSON.stringify(defaultData));
+      if(showFlag) flag('Error en actualitzar', false);
+    }
+    render();
+  }
+
+  function render(){ renderTabs(); renderGrid(); renderLog(); }
+
+  function renderTabs(){
+    const cats = ['Tots', ...Array.from(new Set(state.kpis.map(k=>k.cat)))];
+    const wrap = document.getElementById('dash-tabs');
+    wrap.innerHTML = '';
+    cats.forEach(c=>{
+      const b = document.createElement('button');
+      b.className = 'tab' + (c===activeTab ? ' active' : '');
+      b.textContent = c;
+      b.onclick = () => { activeTab = c; renderTabs(); renderGrid(); };
+      wrap.appendChild(b);
+    });
+  }
+
+  const CAT_COLORS = {
+    'Creixement': '#2e5c8a',           // blau
+    'Finances públiques': '#c9a227',   // groc
+    'Pressupost': '#ac341c',           // vermell
+    'Context': '#3c6b4f'               // verd
+  };
+  const FALLBACK_PALETTE = ['#b8863b', '#16233d', '#4a5670', '#8a3b32'];
+  const catColorMap = {};
+  function catColor(cat){
+    if(CAT_COLORS[cat]) return CAT_COLORS[cat];
+    if(!catColorMap[cat]){
+      const used = Object.keys(catColorMap).length;
+      catColorMap[cat] = FALLBACK_PALETTE[used % FALLBACK_PALETTE.length];
+    }
+    return catColorMap[cat];
+  }
+
+    function moveIndicator(k, dir, list){
+    const posInList = list.indexOf(k);
+    const neighbor = list[posInList + dir];
+    if(!neighbor) return;
+    const realA = state.kpis.indexOf(k);
+    const realB = state.kpis.indexOf(neighbor);
+    state.kpis[realA] = neighbor;
+    state.kpis[realB] = k;
+    persist(); renderGrid();
+  }
+  
+   function renderGrid(){
+    const grid = document.getElementById('dash-grid');
+    grid.innerHTML = '';
+    const list = activeTab === 'Tots' ? state.kpis : state.kpis.filter(k=>k.cat===activeTab);
+    document.getElementById('dash-count').textContent = state.kpis.length + ' indicadors';
+
+     list.forEach((k, i)=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.borderLeftColor = catColor(k.cat);
+          card.innerHTML = `
+        <span class="drag-handle" title="Arrossega">⠿</span>
+        <button class="card-del" title="Elimina">✕</button>
+        <div class="card-cat"><span class="ed" contenteditable="true" data-f="cat" spellcheck="false">${k.cat}</span></div>
+        <div class="card-value">
+          <span class="ed val" contenteditable="true" data-f="value" spellcheck="false">${k.value}</span><span class="ed card-unit" contenteditable="true" data-f="unit" spellcheck="false">${k.unit||''}</span>
+        </div>
+        <div class="ed card-label" contenteditable="true" data-f="label" spellcheck="false">${k.label}</div>
+               <div class="card-meta">
+          <span class="ed" contenteditable="true" data-f="period" spellcheck="false">${k.period||''}</span>
+          <span class="ed" contenteditable="true" data-f="note" spellcheck="false">${k.note||''}</span>
+        </div>
+    
+  function commitOrder(newList){
+    const indices = [];
+    state.kpis.forEach((k, idx) => { if(newList.includes(k)) indices.push(idx); });
+    indices.forEach((idx, i) => { state.kpis[idx] = newList[i]; });
+    persist(); renderTabs(); renderGrid();
+  }
+
+  let dragState = null;
+  function attachDragHandlers(card, k){
+    const handle = card.querySelector('.drag-handle');
+    card._kpiRef = k;
+
+    handle.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      dragState = k;
+      card.classList.add('dragging');
+      card.setPointerCapture(e.pointerId);
+      card._startX = e.clientX; card._startY = e.clientY;
+    });
+    card.addEventListener('pointermove', (e) => {
+      if(dragState !== k) return;
+      const dx = e.clientX - card._startX;
+      const dy = e.clientY - card._startY;
+      card.style.transform = `translate(${dx}px, ${dy}px)`;
+      card.style.zIndex = 10;
+      card.style.pointerEvents = 'none';
+      const elUnder = document.elementFromPoint(e.clientX, e.clientY);
+      card.style.pointerEvents = '';
+      const targetCard = elUnder && elUnder.closest('.card');
+      if(targetCard && targetCard !== card && targetCard.parentElement === card.parentElement){
+        const grid = card.parentElement;
+        const cards = Array.from(grid.children).filter(c=>c.classList.contains('card'));
+        const from = cards.indexOf(card), to = cards.indexOf(targetCard);
+        if(from > -1 && to > -1){
+          if(from < to) grid.insertBefore(card, targetCard.nextSibling);
+          else grid.insertBefore(card, targetCard);
+        }
+      }
+    });
+    card.addEventListener('pointerup', () => {
+      if(dragState !== k) return;
+      dragState = null;
+      card.classList.remove('dragging');
+      card.style.transform = ''; card.style.zIndex = '';
+      const grid = card.parentElement;
+      const newList = Array.from(grid.children)
+        .filter(c=>c.classList.contains('card'))
+        .map(c => c._kpiRef).filter(Boolean);
+      commitOrder(newList);
+    });
+  }
+      card.querySelectorAll('.ed').forEach(el=>{
+        el.addEventListener('blur', () => {
+          const field = el.dataset.f;
+          k[field] = el.textContent.trim();
+          persist();
+          if(field === 'cat'){ renderTabs(); renderGrid(); }
+        });
+        el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
+      });
+
+              attachDragHandlers(card, k);
+
+      card.querySelector('.card-del').addEventListener('click', () => {
+        state.kpis = state.kpis.filter(x=>x.id!==k.id);
+        persist(); renderTabs(); renderGrid();
+      });
+      grid.appendChild(card);
+    });
+
+    const addCard = document.createElement('div');
+    addCard.className = 'add-card';
+    addCard.textContent = '+ Afegir indicador';
+    addCard.onclick = () => {
+      const label = prompt('Nom de l\'indicador:'); if(!label) return;
+      const value = prompt('Valor:', '') || '';
+      const unit = prompt('Unitat (%, M€, dies...):', '') || '';
+      const period = prompt('Període:', '') || '';
+      const note = prompt('Nota / font:', '') || '';
+      const cat = activeTab !== 'Tots' ? activeTab : (prompt('Categoria:', 'Creixement') || 'Creixement');
+      state.kpis.push({ id:'k'+Date.now(), cat, label, value, unit, period, note, trend:'flat' });
+      persist(); renderTabs(); renderGrid();
+    };
+    grid.appendChild(addCard);
+  }
+
+  function renderLog(){
+    const body = document.getElementById('dash-log-body');
+    body.innerHTML = '';
+    state.log.forEach((row, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td contenteditable="true" data-f="indicator">${row.indicator||''}</td>
+        <td contenteditable="true" class="col-val" data-f="value">${row.value||''}</td>
+        <td contenteditable="true" data-f="period">${row.period||''}</td>
+        <td contenteditable="true" data-f="note">${row.note||''}</td>
+        <td><button class="row-del">✕</button></td>`;
+      tr.querySelectorAll('td[contenteditable]').forEach(td=>{
+        td.addEventListener('blur', () => { row[td.dataset.f] = td.textContent.trim(); persist(); });
+      });
+      tr.querySelector('.row-del').addEventListener('click', () => { state.log.splice(idx,1); persist(); renderLog(); });
+      body.appendChild(tr);
+    });
+  }
+
+  document.getElementById('dash-add-row').addEventListener('click', () => {
+    state.log.push({ indicator:'Nou indicador', value:'', period:'', note:'' });
+    persist(); renderLog();
+  });
+  document.getElementById('btn-refresh').addEventListener('click', () => refresh(true));
+  document.getElementById('btn-config').addEventListener('click', () => {
+    document.getElementById('cfg-url').value = cfg.url || '';
+    document.getElementById('cfg-token').value = cfg.token || '';
+    document.getElementById('config-modal').classList.add('show');
+  });
+  document.getElementById('cfg-cancel').addEventListener('click', () => {
+    document.getElementById('config-modal').classList.remove('show');
+  });
+  document.getElementById('cfg-save').addEventListener('click', () => {
+    cfg.url = document.getElementById('cfg-url').value.trim();
+    cfg.token = document.getElementById('cfg-token').value.trim();
+    saveCfg();
+    document.getElementById('config-modal').classList.remove('show');
+    refresh(true);
+  });
+
+  // Poll periodically so both phones stay roughly in sync while open
+  function startPolling(){
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(() => { if(cfgReady()) refresh(false); }, 25000);
+  }
+
+  loadCfg();
+  state = JSON.parse(JSON.stringify(defaultData));
+  render();
+  if(cfgReady()){ refresh(false); } else { warn('Toca ⚙ (a dalt a la dreta) per connectar aquest mòbil amb l\u2019altra persona.'); }
+  startPolling();
+})();
+</script>
+</body>
+</html>
