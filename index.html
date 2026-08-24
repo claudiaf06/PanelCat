@@ -310,12 +310,19 @@
     });
   }
 
-    const CAT_PALETTE = ['#b8863b', '#3c6b4f', '#8a3b32', '#16233d', '#4a5670'];
+  const CAT_COLORS = {
+    'Creixement': '#2e5c8a',           // blau
+    'Finances públiques': '#c9a227',   // groc
+    'Pressupost': '#ac341c',           // vermell
+    'Context': '#3c6b4f'               // verd
+  };
+  const FALLBACK_PALETTE = ['#b8863b', '#16233d', '#4a5670', '#8a3b32'];
   const catColorMap = {};
   function catColor(cat){
+    if(CAT_COLORS[cat]) return CAT_COLORS[cat];
     if(!catColorMap[cat]){
       const used = Object.keys(catColorMap).length;
-      catColorMap[cat] = CAT_PALETTE[used % CAT_PALETTE.length];
+      catColorMap[cat] = FALLBACK_PALETTE[used % FALLBACK_PALETTE.length];
     }
     return catColorMap[cat];
   }
