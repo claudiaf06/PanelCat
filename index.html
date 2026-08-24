@@ -65,6 +65,11 @@
   .section-title { font-family:'Fraunces',serif; font-weight:600; font-size:17px; margin:26px 0 12px; display:flex; align-items:center; gap:10px; }
   .section-title::after { content:''; flex:1; height:1px; background:var(--line); }
 
+    .card-move { display:flex; justify-content:space-between; margin-top:8px; }
+  .move-btn { border:1px solid var(--line); background:var(--paper); border-radius:4px; width:26px; height:24px; cursor:pointer; color:var(--ink-soft); font-size:13px; }
+  .move-btn:disabled { opacity:0.25; cursor:default; }
+  .move-btn:not(:disabled):active { background:var(--gold-soft); }
+
   .log-wrap { background:var(--paper-raised); border:1px solid var(--line); border-radius:4px; overflow-x:auto; }
   table { width:100%; border-collapse:collapse; font-size:12.5px; min-width:560px; }
   thead th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-soft); background:var(--gold-soft); padding:9px 10px; font-weight:700; }
@@ -305,15 +310,37 @@
     });
   }
 
+    const CAT_PALETTE = ['#b8863b', '#3c6b4f', '#8a3b32', '#16233d', '#4a5670'];
+  const catColorMap = {};
+  function catColor(cat){
+    if(!catColorMap[cat]){
+      const used = Object.keys(catColorMap).length;
+      catColorMap[cat] = CAT_PALETTE[used % CAT_PALETTE.length];
+    }
+    return catColorMap[cat];
+  }
+
+    function moveIndicator(k, dir, list){
+    const posInList = list.indexOf(k);
+    const neighbor = list[posInList + dir];
+    if(!neighbor) return;
+    const realA = state.kpis.indexOf(k);
+    const realB = state.kpis.indexOf(neighbor);
+    state.kpis[realA] = neighbor;
+    state.kpis[realB] = k;
+    persist(); renderGrid();
+  }
+  
    function renderGrid(){
     const grid = document.getElementById('dash-grid');
     grid.innerHTML = '';
     const list = activeTab === 'Tots' ? state.kpis : state.kpis.filter(k=>k.cat===activeTab);
     document.getElementById('dash-count').textContent = state.kpis.length + ' indicadors';
 
-    list.forEach(k=>{
+     list.forEach((k, i)=>{
       const card = document.createElement('div');
-      card.className = 'card trend-' + (k.trend||'flat');
+      card.className = 'card';
+      card.style.borderLeftColor = catColor(k.cat);
       card.innerHTML = `
         <button class="card-del" title="Elimina">✕</button>
         <div class="card-cat"><span class="ed" contenteditable="true" data-f="cat" spellcheck="false">${k.cat}</span></div>
@@ -321,9 +348,13 @@
           <span class="ed val" contenteditable="true" data-f="value" spellcheck="false">${k.value}</span><span class="ed card-unit" contenteditable="true" data-f="unit" spellcheck="false">${k.unit||''}</span>
         </div>
         <div class="ed card-label" contenteditable="true" data-f="label" spellcheck="false">${k.label}</div>
-        <div class="card-meta">
+               <div class="card-meta">
           <span class="ed" contenteditable="true" data-f="period" spellcheck="false">${k.period||''}</span>
           <span class="ed" contenteditable="true" data-f="note" spellcheck="false">${k.note||''}</span>
+        </div>
+        <div class="card-move">
+          <button class="move-btn" data-dir="-1" ${i===0?'disabled':''}>‹</button>
+          <button class="move-btn" data-dir="1" ${i===list.length-1?'disabled':''}>›</button>
         </div>`;
 
       card.querySelectorAll('.ed').forEach(el=>{
@@ -334,6 +365,10 @@
           if(field === 'cat'){ renderTabs(); renderGrid(); }
         });
         el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
+      });
+
+             card.querySelectorAll('.move-btn').forEach(btn=>{
+        btn.addEventListener('click', () => moveIndicator(k, parseInt(btn.dataset.dir), list));
       });
 
       card.querySelector('.card-del').addEventListener('click', () => {
