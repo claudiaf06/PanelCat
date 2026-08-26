@@ -101,38 +101,40 @@
   .btn-primary { background:var(--ink); color:#fff; flex:1; }
   .btn-secondary { background:var(--paper); color:var(--ink); border:1px solid var(--line); }
   @media print {
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-    .icon-btn,
-    .card-del,
-    #dash-search,
-    .tabs,
-    .save-flag,
-    .add-card {
-      display: none !important;
-    }
-    body {
-      background: #fff;
-    }
-    #dash {
-      max-width: 100%;
-    }
-    .grid {
-      display: block !important;
-    }
-    .card {
-      display: inline-block;
-      width: 45%;
-      vertical-align: top;
-      margin: 0 2% 12px 0;
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-    }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  
+  .icon-btn,
+  .card-del,
+  #dash-search,
+  .tabs,
+  .save-flag,
+  .add-card {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  #dash {
+    max-width: 100%;
+  }
+
+  /* Mantiene el grid tal como en pantalla, pero evita que las tarjetas se corten */
+  .grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
 </style>
 </head>
 <body>
