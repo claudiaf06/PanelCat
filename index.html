@@ -140,6 +140,29 @@
     </div>
   </div>
 
+  @media print {
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .grid {
+    break-inside: avoid;
+  }
+  .icon-btn,
+  .card-del,
+  #dash-search,
+  .tabs,
+  .save-flag {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  #dash {
+    max-width: 100%;
+  }
+}
+
   <div class="foot-note">
     Toca sobre qualsevol xifra per editar-la. Es desa a un full de Google Sheets privat que
     vosaltres controleu, així que els canvis es sincronitzen entre els dos mòbils. Toca ⟳ per
