@@ -48,6 +48,14 @@
   .tab { font-size:12px; font-weight:600; padding:6px 12px; border:1px solid var(--line); border-radius:999px; background:var(--paper-raised); cursor:pointer; color:var(--ink-soft); }
   .tab.active { background:var(--ink); border-color:var(--ink); color:#fff; }
 
+    .search-box {
+    width: 100%; padding: 9px 12px; margin-bottom: 12px;
+    border: 1px solid var(--line); border-radius: 6px;
+    font-size: 13px; font-family: 'Inter', sans-serif;
+    background: var(--paper-raised); color: var(--ink);
+  }
+  .search-box:focus { outline: none; border-color: var(--gold); }
+  
   .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px; margin-bottom:26px; }
   .card { background:var(--paper-raised); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:3px; padding:14px 14px 12px; position:relative; }
   .card.trend-up { border-left-color:var(--green); }
@@ -115,6 +123,7 @@
   <div class="warn-banner" id="dash-warn"></div>
   <div class="ok-banner" id="dash-ok"></div>
 
+  <input type="text" id="dash-search" class="search-box" placeholder="Cerca un indicador..." />
   <div class="tabs" id="dash-tabs"></div>
   <div class="grid" id="dash-grid"></div>
 
@@ -194,6 +203,7 @@
   let state = null;
   let cfg = { url:'', token:'' };
   let activeTab = 'Tots';
+  let searchQuery = '';
   let pollTimer = null;
 
   function loadCfg(){
@@ -327,7 +337,15 @@
    function renderGrid(){
     const grid = document.getElementById('dash-grid');
     grid.innerHTML = '';
-    const list = activeTab === 'Tots' ? state.kpis : state.kpis.filter(k=>k.cat===activeTab);
+        let list = activeTab === 'Tots' ? state.kpis : state.kpis.filter(k=>k.cat===activeTab);
+    if(searchQuery){
+      const q = searchQuery.toLowerCase();
+      list = list.filter(k =>
+        (k.label||'').toLowerCase().includes(q) ||
+        (k.cat||'').toLowerCase().includes(q) ||
+        (k.note||'').toLowerCase().includes(q)
+      );
+    }
     document.getElementById('dash-count').textContent = state.kpis.length + ' indicadors';
 
     list.forEach(k=>{
@@ -401,6 +419,10 @@
   document.getElementById('dash-add-row').addEventListener('click', () => {
     state.log.push({ indicator:'Nou indicador', value:'', period:'', note:'' });
     persist(); renderLog();
+  });
+    document.getElementById('dash-search').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderGrid();
   });
   document.getElementById('btn-refresh').addEventListener('click', () => refresh(true));
   document.getElementById('btn-config').addEventListener('click', () => {
