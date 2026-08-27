@@ -399,11 +399,19 @@ document.getElementById('dash').style.display = 'block';
       card.querySelectorAll('.ed').forEach(el=>{
         el.addEventListener('blur', () => {
           const field = el.dataset.f;
-          k[field] = el.textContent.trim();
+          const newVal = el.innerHTML.trim();
+          if(newVal === (k[field]||'')) return; // no ha canviat res: no cal desar
+          k[field] = newVal;
           persist();
           if(field === 'cat'){ renderTabs(); renderGrid(); }
         });
-        el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } });
+        el.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter'){ e.preventDefault(); el.blur(); }
+          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='b'){
+            e.preventDefault();
+            document.execCommand('bold');
+          }
+        });
       });
 
       card.querySelector('.card-del').addEventListener('click', () => {
@@ -441,7 +449,7 @@ document.getElementById('dash').style.display = 'block';
         <td contenteditable="true" data-f="note">${row.note||''}</td>
         <td><button class="row-del">✕</button></td>`;
       tr.querySelectorAll('td[contenteditable]').forEach(td=>{
-        td.addEventListener('blur', () => { row[td.dataset.f] = td.textContent.trim(); persist(); });
+    td.addEventListener('blur', () => { row[td.dataset.f] = td.innerHTML.trim(); persist(); });
       });
       tr.querySelector('.row-del').addEventListener('click', () => { state.log.splice(idx,1); persist(); renderLog(); });
       body.appendChild(tr);
