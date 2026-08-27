@@ -437,16 +437,16 @@
             e.preventDefault();
             document.execCommand('foreColor', false, '#ac341c');
           }
-          if((e.ctrlKey || e.metaKey) && e.key==='2'){
+                  if((e.ctrlKey || e.metaKey) && e.key==='2'){
             e.preventDefault();
             document.execCommand('foreColor', false, '#3c6b4f');
           }
-        });
-      });
-                if((e.ctrlKey || e.metaKey) && e.key==='3'){
+          if((e.ctrlKey || e.metaKey) && e.key==='3'){
             e.preventDefault();
             document.execCommand('foreColor', false, '#16233d');
           }
+        });
+      });
 
       card.querySelector('.card-del').addEventListener('click', () => {
         state.kpis = state.kpis.filter(x=>x.id!==k.id);
