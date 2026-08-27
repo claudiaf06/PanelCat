@@ -127,7 +127,7 @@
   <div class="masthead">
     <div>
       <div class="masthead-title">Panell Econòmic de Catalunya</div>
-      <div class="masthead-sub">Indicadors econòmics i socials</div>
+      <div class="masthead-sub">Indicadors fiscals i macroeconòmics · compartit</div>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-refresh" title="Actualitza">⟳</button>
@@ -202,29 +202,29 @@
 
   const defaultData = {
     kpis: [
-      { id:'k1', cat:'Creixement', label:'PIB 2025', value:'+ 2,7', unit:'%', period:'vs. +1,4% Zona Euro / +3,4% Mundial', note:'Informe Anual Economia Catalana 2025', trend:'up' },
+      { id:'k1', cat:'Creixement', label:'PIB 2025', value:'+ 2,7', unit:'%', period:'vs. +1,4% Zona Euro / +3,4% Mundial', note:'PIB 2024: 3,9% · Informe Anual Economia Catalana 2025', trend:'up' },
       { id:'k2', cat:'Creixement', label:'PIB per habitant 2025', value:'+ 1,6', unit:'%', period:'vs. +1,1% Zona Euro', note:'Informe Anual Economia Catalana 2025', trend:'up' },
-      { id:'k3', cat:'Finances públiques', label:'Deute Generalitat i sector públic', value:'90.335,6', unit:'M€', period:'T1 2026', note:"Banc d'Espanya", trend:'flat' },
-      { id:'k4', cat:'Finances públiques', label:'Ràtio deute / PIB', value:'27,8', unit:'%', period:'T1 2026', note:"Banc d'Espanya", trend:'down' },
-      { id:'k5', cat:'Finances públiques', label:'Dèficit públic', value:'0,54', unit:'% PIB', period:'Objectiu: 0,1%', note:'Informe Anual Economia Catalana 2025', trend:'down' },
+      { id:'k3', cat:'Finances públiques', label:'Deute Generalitat i sector públic', value:'90.335,6', unit:'M€', period:'T1 2026 · +0,7% interanual', note:"Banc d'Espanya", trend:'flat' },
+      { id:'k4', cat:'Finances públiques', label:'Ràtio deute / PIB', value:'27,8', unit:'%', period:'T1 2026 · -1,5 pp interanual', note:"Banc d'Espanya", trend:'down' },
+      { id:'k5', cat:'Finances públiques', label:'Dèficit públic', value:'0,54', unit:'% PIB', period:'Objectiu: 0,1% · + 0,13 pp interanual', note:'Informe Anual Economia Catalana 2025', trend:'down' },
       { id:'k6', cat:'Finances públiques', label:'Superàvit corrent', value:'+2.475', unit:'M€', period:'2026 (PGC 2026)', note:'Màxim de la sèrie històrica', trend:'up' },
       { id:'k7', cat:'Pressupost', label:'Despesa total pressupostada', value:'49.162', unit:'M€', period:'PGC 2026 (rècord)', note:'+22,8% r. PGC 2023', trend:'up' },
       { id:'k8', cat:'Finances públiques', label:'Període mitjà de pagament', value:'29,24', unit:'dies', period:'Juny 2026', note:'Límit normatiu: 30 dies', trend:'down' },
       { id:'k9', cat:'Pressupost', label:'Inversió del sector públic', value:'4.146', unit:'M€', period:'PGC 2026', note:'+45% r. PGC 2023', trend:'up' },
-      { id:'k10', cat:'Mercat Laboral', label:"Taxa d'atur (De 16 a 24 anys - 16,05%)", value:'7,9', unit:'%', period:'2n trim 2026 - dada més baixa desde 2007', note:'EPA - INE', trend:'flat' },
+      { id:'k10', cat:'Mercat Laboral', label:"Taxa d'atur (De 16 a 24 anys - 16,05%)", value:'7,9', unit:'%', period:'2n trim 2026 - dada més baixa desde 2007 · -1,5% interanual', note:'EPA - INE', trend:'down' },
       { id:'k11', cat:'Context', label:'Població 01/2026', value:'8,2', unit:'M hab.', period:'01/2026', note:'IDESCAT', trend:'flat' },
       { id:'k12', cat:'Context', label:'Població estrangera', value:'1,5', unit:'M hab.', period:'01/2025', note:'IDESCAT', trend:'flat' },
-      { id:'k13', cat:'Condicions de Vida', label:'Renda mitjana neta anual llars', value:'17.262', unit:'€', period:'2025', note:'IDESCAT', trend:'flat' },
-      { id:'k14', cat:'Condicions de Vida', label:'Taxa risc de pobresa', value:'18,9', unit:'%', period:'2025', note:'IDESCAT', trend:'flat' },
+      { id:'k13', cat:'Condicions de Vida', label:'Renda mitjana neta anual llars (per persona)', value:'17.262', unit:'€', period:'2025 · + 4,3% interanual', note:'IDESCAT', trend:'up' },
+      { id:'k14', cat:'Condicions de Vida', label:'Taxa risc de pobresa (Després transferències socials)', value:'18,9', unit:'%', period:'2025', note:'*pensions + atur + invalidesa + ajuts famílies, etc · + 1,5 pp interanual · IDESCAT', trend:'up' },
       { id:'k15', cat:'Pressupost', label:'Generació riquesa', value:'11.000', unit:'M€', period:'PGC 2026', note:'', trend:'flat' },
       { id:'k16', cat:'Creixement', label:'Inversió estrangera captada', value:'1.105', unit:'M€', period:'2025 - Rècord històric · 101 projectes (+ 5% r. 2024)', note:'ACCIÓ', trend:'up' },
       { id:'k17', cat:'Creixement', label:'Exportacions', value:'9.086,8', unit:'M€', period:'Maig 2026 (prov.) - IDESCAT', note:'+ 1,9% interanual', trend:'up' },
       { id:'k18', cat:'Creixement', label:'Captació fons next generation', value:'10.180,1', unit:'M€', period:'2021-2026', note:'Lidera captació fons conjunt estat', trend:'up' },
-      { id:'k19', cat:'Mercat Laboral', label:"Taxa d'ocupació (Dones - 52,88% ; Homes - 61,59%)", value:'57,17', unit:'%', period:'2n trim 2026', note:'EPA - INE', trend:'flat' },
-      { id:'k20', cat:'Mercat Laboral', label:'Població ocupada', value:'3.997.800', unit:'', period:'2n trim 2026 - Màxims darrers divuit anys', note:'EPA - INE', trend:'flat' },
+      { id:'k19', cat:'Mercat Laboral', label:"Taxa d'ocupació (Dones - 52,88% ; Homes - 61,59%)", value:'57,17', unit:'%', period:'2n trim 2026 · + 1,35% interanual', note:'EPA - INE', trend:'up' },
+      { id:'k20', cat:'Mercat Laboral', label:'Població ocupada', value:'3.997.800', unit:'', period:'2n trim 2026 - Màxims darrers divuit anys · + 1,3% interanual', note:'EPA - INE', trend:'up' },
       { id:'k21', cat:'Creixement', label:'Previsió PIB 2026', value:'+ 2,3', unit:'%', period:'Informe Anual Economia Catalana', note:'2,2% - Cambra + AQR-Lab', trend:'up' },
-      { id:'k22', cat:'Mercat Laboral', label:"Creació d'empreses", value:'24.952', unit:'societats mercantils', period:'2025 (+7,7% r. 2024)', note:'Informe Anual Economia Catalana', trend:'flat' },
-      { id:'k23', cat:'Mercat Laboral', label:'Grans empreses', value:'+ 5,9', unit:'%', period:'2025', note:'Informe Anual Economia Catalana', trend:'flat' },
+      { id:'k22', cat:'Mercat Laboral', label:"Creació d'empreses", value:'24.952', unit:'societats mercantils', period:'2025 (+7,7% r. 2024)', note:'Informe Anual Economia Catalana', trend:'up' },
+      { id:'k23', cat:'Mercat Laboral', label:'Grans empreses', value:'+ 5,9', unit:'%', period:'2025', note:'Informe Anual Economia Catalana', trend:'up' },
       { id:'k24', cat:'Energia', label:'Consum energètic final', value:'-1,5', unit:'%', period:'2023 (- 1,5% r. 2022)', note:'Informe Anual Economia Catalana', trend:'down' },
       { id:'k25', cat:'Energia', label:'Energies renovables', value:'11,7', unit:'%*', period:'2023', note:"* % consum brut d'energia final - Informe Anual Economia Catalana", trend:'flat' },
       { id:'k26', cat:'Energia', label:'Mix elèctric', value:'21,3', unit:'%', period:'2025', note:'* % producció elèctrica - Informe Anual Economia Catalana', trend:'flat' },
@@ -232,18 +232,23 @@
       { id:'k28', cat:'Creixement', label:'IPC interanual Catalunya', value:'+ 3,5', unit:'%', period:'Juliol 2026', note:'INE', trend:'flat' },
       { id:'k29', cat:'Creixement', label:'IPC variació mensual', value:'+ 0,2', unit:'%', period:'Juliol 2026', note:'INE', trend:'flat' },
       { id:'k30', cat:'Creixement', label:'Productivitat total dels factors', value:'1,0', unit:'%', period:'2025', note:"IDESCAT prov. - Aportació de l'eficiència (no de treballar/invertir més) al creixement del PIB", trend:'flat' },
-      { id:'k31', cat:'Creixement', label:"Tipus d'interès BCE", value:'2,25', unit:'%', period:'Juliol 2026', note:'BCE', trend:'flat' },
-      { id:'k32', cat:'Creixement', label:'Euríbor a 12 mesos (Mitjana mensual)', value:'2,946', unit:'%', period:'Agost 2026 (provisional)', note:'', trend:'flat' },
-      { id:'k33', cat:'Mercat Laboral', label:'Empreses actives', value:'610.062', unit:'', period:'Gener 2025', note:'Informe Anual Economia Catalana', trend:'flat' },
-      { id:'k34', cat:'Mercat Laboral', label:'Taxa de temporalitat', value:'12,2', unit:'%', period:'2n trim 2026', note:'EPA - INE ***', trend:'flat' },
+      { id:'k31', cat:'Creixement', label:"Tipus d'interès BCE", value:'2,25', unit:'%', period:'Juliol 2026 - Facilitat de dipòsit · + 0,25% interanual', note:'BCE', trend:'up' },
+      { id:'k32', cat:'Creixement', label:'Euríbor a 12 mesos (Mitjana mensual)', value:'2,946', unit:'%', period:'Agost 2026 (provisional) · + 0,832 interanual', note:'', trend:'up' },
+      { id:'k33', cat:'Mercat Laboral', label:'Empreses actives', value:'610.062', unit:'', period:'Gener 2025 · + 1,2% interanual', note:'*empreses amb seu social a Catalunya · Informe Anual Economia Catalana', trend:'up' },
+      { id:'k34', cat:'Mercat Laboral', label:'Taxa de temporalitat', value:'12,2', unit:'%', period:'2n trim 2026 · -0,5 pp interanual', note:'EPA - INE ***', trend:'down' },
       { id:'k35', cat:'Creixement', label:'Importacions', value:'11.381,7', unit:'M€', period:'Maig 2026 (prov.) - IDESCAT', note:'+ 15,7% interanual', trend:'up' },
-      { id:'k36', cat:'Turisme', label:'Turistes estrangers', value:'20,1', unit:'M', period:'2025 - rècord', note:'IDESCAT', trend:'up' },
+      { id:'k36', cat:'Turisme', label:'Turistes estrangers', value:'20,1', unit:'M', period:'2025 - rècord (+0,6% r. 2024)', note:'IDESCAT', trend:'up' },
       { id:'k37', cat:'Turisme', label:'Despesa turística estrangera', value:'24.807', unit:'M€', period:'2025 - (+4,5% r. 2024)', note:'IDESCAT', trend:'up' },
-      { id:'k38', cat:'Habitatge', label:'Lloguer mitjà', value:'861', unit:'€/mes', period:'T1 2026 - Barcelona ciutat: 1.137€', note:'Dept. Habitatge', trend:'flat' },
+      { id:'k38', cat:'Habitatge', label:'Lloguer mitjà', value:'861', unit:'€/mes', period:'T1 2026 - Barcelona ciutat: 1.137€ · + 4,04% interanual', note:'Dept. Habitatge', trend:'up' },
       { id:'k39', cat:'Habitatge', label:'Preu compravenda habitatge', value:'+ 10,5', unit:'%*', period:'T1 2026 *variació interanual', note:'IDESCAT', trend:'up' },
       { id:'k40', cat:'Habitatge', label:"Pla d'habitatge públic (objectiu 2030)", value:'50.000', unit:'', period:'', note:'', trend:'flat' },
       { id:'k41', cat:'Habitatge', label:'Habitatges en construcció', value:'19.315', unit:'', period:'2025', note:'Ministeri de Foment', trend:'flat' },
-      { id:'k42', cat:'Habitatge', label:'Habitatges protegits construïts', value:'3.517', unit:'', period:"2025 - xifra més alta registrada des de l'any 2012", note:'Nota de premsa Govern', trend:'flat' }
+      { id:'k42', cat:'Habitatge', label:'Habitatges protegits construïts', value:'3.517', unit:'', period:"2025 - xifra més alta registrada des de l'any 2012", note:'Nota de premsa Govern', trend:'flat' },
+      { id:'k43', cat:'Condicions de Vida', label:'Taxa de risc de pobresa (Abans transferències socials)', value:'40,4', unit:'%', period:'2025 · + 0,3 pp interanual', note:'IDESCAT', trend:'up' },
+      { id:'k44', cat:'Condicions de Vida', label:'Taxa AROPE (risc pobresa o exclusió social)', value:'24,8', unit:'%', period:'2025 · + 0,8 pp interanual', note:'IDESCAT', trend:'up' },
+      { id:'k45', cat:'Condicions de Vida', label:'Índex de Gini', value:'29,1', unit:'%', period:'2024 · + 0,1 pp interanual', note:'*0% màxima igualtat · IDESCAT', trend:'up' },
+      { id:'k46', cat:'Condicions de Vida', label:'Satisfacció global amb la seva vida', value:'7,2', unit:'/10', period:'2025 · + 0% interanual', note:'6,8/10 persones risc de pobresa · IDESCAT', trend:'flat' },
+      { id:'k47', cat:'Condicions de Vida', label:'Arriben a final de mes amb dificultat', value:'47,3', unit:'%', period:'2025 · -0,3 pp interanual', note:'IDESCAT', trend:'down' }
     ],
     log: [
       { indicator:'Nou indicador', value:'', period:'', note:'' }
@@ -374,7 +379,6 @@
     return FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length] || '#b8863b';
   }
 
-
   function renderTabs(){
     const cats = ['Tots', ...Array.from(new Set(state.kpis.map(k=>k.cat)))];
     const wrap = document.getElementById('dash-tabs');
@@ -444,7 +448,7 @@
             e.preventDefault();
             document.execCommand('foreColor', false, '#ac341c');
           }
-                  if((e.ctrlKey || e.metaKey) && e.key==='2'){
+          if((e.ctrlKey || e.metaKey) && e.key==='2'){
             e.preventDefault();
             document.execCommand('foreColor', false, '#1a8f4c');
           }
