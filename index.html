@@ -108,16 +108,33 @@
       display: none !important;
     }
     body { background: #fff; }
-    #dash { max-width: 100%; }
+    #dash { max-width: 100%; padding: 6px !important; }
+
+    .masthead { padding-bottom: 4px !important; margin-bottom: 4px !important; }
+    .masthead-title { font-size: 16px !important; }
+    .masthead-sub { font-size: 8px !important; }
+    .strip { padding: 4px 0 6px !important; margin-bottom: 6px !important; }
+
     .grid {
       display: grid !important;
-      grid-template-columns: repeat(4, 1fr) !important;
-      gap: 10px !important;
+      grid-template-columns: repeat(6, 1fr) !important;
+      gap: 4px !important;
+      margin-bottom: 4px !important;
     }
+
     .card {
       break-inside: avoid !important;
       page-break-inside: avoid !important;
+      padding: 5px 6px !important;
+      border-left-width: 2px !important;
     }
+    .card-cat { font-size: 6px !important; margin-bottom: 2px !important; }
+    .card-value { font-size: 13px !important; }
+    .card-unit { font-size: 8px !important; }
+    .card-label { font-size: 7px !important; margin-top: 2px !important; }
+    .card-meta { font-size: 5.5px !important; margin-top: 3px !important; padding-top: 3px !important; gap: 0px !important; }
+
+    .foot-note { display: none !important; }
   }
 </style>
 </head>
