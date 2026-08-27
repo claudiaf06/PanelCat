@@ -428,7 +428,14 @@
           if(field === 'cat'){ renderTabs(); renderGrid(); }
         });
         el.addEventListener('keydown', (e)=>{
-          if(e.key==='Enter'){ e.preventDefault(); el.blur(); }
+          if(e.key==='Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey){
+            e.preventDefault();
+            el.blur();
+          }
+          if(e.key==='Enter' && (e.ctrlKey || e.metaKey) && e.shiftKey){
+            e.preventDefault();
+            document.execCommand('insertLineBreak');
+          }
           if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='b'){
             e.preventDefault();
             document.execCommand('bold');
