@@ -99,7 +99,7 @@
   .btn-primary { background:var(--ink); color:#fff; flex:1; }
   .btn-secondary { background:var(--paper); color:var(--ink); border:1px solid var(--line); }
 
-  @media print {
+    @media print {
     * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
@@ -108,31 +108,31 @@
       display: none !important;
     }
     body { background: #fff; }
-    #dash { max-width: 100%; padding: 6px !important; }
+    #dash { max-width: 100%; padding: 10px !important; }
 
-    .masthead { padding-bottom: 4px !important; margin-bottom: 4px !important; }
-    .masthead-title { font-size: 16px !important; }
-    .masthead-sub { font-size: 8px !important; }
-    .strip { padding: 4px 0 6px !important; margin-bottom: 6px !important; }
+    .masthead { padding-bottom: 8px !important; margin-bottom: 8px !important; }
+    .masthead-title { font-size: 22px !important; }
+    .masthead-sub { font-size: 10px !important; }
+    .strip { padding: 6px 0 10px !important; margin-bottom: 10px !important; }
 
     .grid {
       display: grid !important;
-      grid-template-columns: repeat(6, 1fr) !important;
-      gap: 4px !important;
-      margin-bottom: 4px !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 8px !important;
+      margin-bottom: 8px !important;
     }
 
     .card {
       break-inside: avoid !important;
       page-break-inside: avoid !important;
-      padding: 5px 6px !important;
-      border-left-width: 2px !important;
+      padding: 10px 12px !important;
+      border-left-width: 3px !important;
     }
-    .card-cat { font-size: 6px !important; margin-bottom: 2px !important; }
-    .card-value { font-size: 13px !important; }
-    .card-unit { font-size: 8px !important; }
-    .card-label { font-size: 7px !important; margin-top: 2px !important; }
-    .card-meta { font-size: 5.5px !important; margin-top: 3px !important; padding-top: 3px !important; gap: 0px !important; }
+    .card-cat { font-size: 8px !important; margin-bottom: 4px !important; }
+    .card-value { font-size: 20px !important; }
+    .card-unit { font-size: 11px !important; }
+    .card-label { font-size: 10px !important; margin-top: 4px !important; }
+    .card-meta { font-size: 8px !important; margin-top: 6px !important; padding-top: 6px !important; gap: 1px !important; }
 
     .foot-note { display: none !important; }
   }
